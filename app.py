@@ -165,10 +165,37 @@ if submitted:
     input_scaled = scaler.transform(input_df)
     prediction = model.predict(input_scaled)[0]
 
-    if prediction == 1:
-        st.error("⚠️ High Mental Health Risk")
+    if prediction == "High":
+        st.error("🚨 High Risk Prediction")
+        st.write("""
+            **Hey there, thank you for taking this mental health check.**  
+            Your result indicates a *high risk*. This doesn't mean something is wrong with you — it simply signals that you may be under more stress than usual, and it’s okay to need support.
+
+            > 💡 **Here’s what you can do:**
+            - Talk to someone you trust — a friend, mentor, or school counselor.
+            - Prioritize sleep, food, and rest. It’s not laziness — it’s self-care.
+            - Reduce your academic pressure where possible. Don’t hesitate to ask for help.
+            - You’re not alone. Many students feel this way — and things *can* get better.
+
+            **Your mental health matters.** And the fact that you're checking in? That’s courage. Take it one step at a time.
+
+            > 💬 *If you’d like help finding support, reach out to school health services or someone close to you.*
+        """)
+    elif prediction == "Low":
+        st.success("✅ Low Risk Prediction")
+        st.write("""
+            **Great job taking time for your mental health!**  
+            Your result indicates a *low risk* — and that’s awesome! You seem to be handling things well right now.
+
+            > 💡 **Keep it up by:**
+            - Staying connected to friends and activities you enjoy.
+            - Taking breaks to recharge — even when things feel okay.
+            - Checking in on your friends too. A kind word can go a long way.
+
+            Your well-being is important. Stay mindful, and keep being kind to yourself.
+        """)
     else:
-        st.success("✅ Low Mental Health Risk")
+        st.warning("Prediction could not be made.")
 
 st.markdown("""
     <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.3); margin-top: 3rem;"/>
