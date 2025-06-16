@@ -60,17 +60,17 @@ st.markdown("""
     }
 
     /* Input and Select boxes - Soft border and padding */
-    .stTextInput>div>div>input,
     .stNumberInput>div>div>input,
+    .stTextInput > div > div > input,
+    .stTextInput > div > div > textarea,
     .stSelectbox>div>div,
     .stSlider>div,
     .stRadio>div {
-        background-color: rgba(255, 255, 255, 0.12);
         color: white;
         border: 1px solid rgba(255, 255, 255, 0.3);  /* softer border */
         border-radius: 10px;
         padding: 0.6rem 1rem;
-        margin-bottom: 1rem;
+        
         box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);  /* optional soft shadow */
     }
 
@@ -88,6 +88,8 @@ st.markdown("""
         padding: 2rem 4rem;
     }
 
+
+        
     button[kind="primary"]:hover {
         background-color: rgba(255, 255, 255, 0.25);
     }
@@ -102,7 +104,7 @@ st.markdown("""
         visibility: hidden;
     }
     
-
+    
     </style>
 """, unsafe_allow_html=True)
 
@@ -114,22 +116,23 @@ with st.form("input_form"):
     col1, col2 = st.columns(2)
 
     with col1:
+        name = st.text_input("Enter your name")
         gender = st.radio("Gender", ["Male", "Female"])
-        age = st.number_input("Age", min_value=10, max_value=50, value=20)
+        age = st.number_input("Age", min_value=10, max_value=50)
         academic_year = st.radio("Current Academic Year", ["100", "200", "300", "400", "500"])
-        cgpa = st.number_input("CGPA", min_value=0.0, max_value=5.0, step=0.1)
+        cgpa = st.number_input("CGPA", min_value=1.0, max_value=5.0, step=0.1)
         residential = st.radio("Residential Status", ["On-campus", "Off-campus"])
-        sports = st.slider("Sports Engagement", 0, 5, 2)
+        sports = st.slider("Sports Engagement", 0, 5)
 
     with col2:
-        sleep = st.number_input("Average Sleep Time (hours/day)", min_value=0.0, max_value=24.0, step=0.5)
-        extracurricular = st.slider("Extracurricular Involvement", 0, 5, 2)
-        workload = st.slider("Academic Workload", 0, 5, 3)
-        diet = st.slider("Diet Quality", 0, 5, 2)
-        finance = st.slider("Financial Pressure", 0, 5, 3)
-        social = st.slider("Social Relationships", 0, 5, 2)
-        anxiety = st.slider("Anxiety Level", 0, 5, 3)
-        academic_pressure = st.slider("Academic Pressure", 0, 5, 3)
+        sleep = st.number_input("Average Sleep Time (hours/day)", min_value=1.0, max_value=24.0, step=0.5)
+        extracurricular = st.slider("Extracurricular Involvement", 0, 5)
+        workload = st.slider("Academic Workload", 0, 5)
+        diet = st.slider("Diet Quality", 0, 5)
+        finance = st.slider("Financial Pressure", 0, 5)
+        social = st.slider("Social Relationships", 0, 5)
+        anxiety = st.slider("Anxiety Level", 0, 5)
+        academic_pressure = st.slider("Academic Pressure", 0, 5)
 
     submitted = st.form_submit_button("Check Risk")
 
@@ -155,47 +158,52 @@ if submitted:
     input_df = pd.DataFrame([input_dict])
     input_df = pd.get_dummies(input_df)
 
-    # Ensure all columns are present
     for col in feature_names:
         if col not in input_df.columns:
             input_df[col] = 0
-    input_df = input_df[feature_names]  # reorder
+    input_df = input_df[feature_names]
 
-    # Scale and predict
     input_scaled = scaler.transform(input_df)
-    prediction = model.predict(input_scaled)[0]
+    prediction = model.predict(input_scaled)[0]  # prediction is an integer
 
-    if prediction == "High":
-        st.error("🚨 High Risk Prediction")
-        st.write("""
+    if prediction == 1:
+        st.error(
+            f"⚠️ {name}, your result shows a **High Mental Health Risk**.\n\n"
+        )
+        st.write(
+            """
             **Hey there, thank you for taking this mental health check.**  
-            Your result indicates a *high risk*. This doesn't mean something is wrong with you — it simply signals that you may be under more stress than usual, and it’s okay to need support.
+            Your result indicates a *high risk*. This doesn't mean something is wrong with you, it simply signals that you may be under more stress than usual, and it’s okay to need support.
 
             > 💡 **Here’s what you can do:**
-            - Talk to someone you trust — a friend, mentor, or school counselor.
-            - Prioritize sleep, food, and rest. It’s not laziness — it’s self-care.
+            - Talk to someone you trust, a friend, mentor, or school counselor.
+            - Prioritize sleep, food, and rest. It’s not laziness, it’s self-care.
             - Reduce your academic pressure where possible. Don’t hesitate to ask for help.
-            - You’re not alone. Many students feel this way — and things *can* get better.
+            - You’re not alone. Many students feel this way and things *can* get better.
 
             **Your mental health matters.** And the fact that you're checking in? That’s courage. Take it one step at a time.
 
             > 💬 *If you’d like help finding support, reach out to school health services or someone close to you.*
-        """)
-    elif prediction == "Low":
-        st.success("✅ Low Risk Prediction")
-        st.write("""
+            """
+        )
+    else:
+        st.success(
+            f"✅ {name}, your result shows a **Low Mental Health Risk**.\n\n"
+        )
+        st.write(
+            """
             **Great job taking time for your mental health!**  
-            Your result indicates a *low risk* — and that’s awesome! You seem to be handling things well right now.
+            Your result indicates a *low risk* and that’s awesome! You seem to be handling things well right now.
 
             > 💡 **Keep it up by:**
             - Staying connected to friends and activities you enjoy.
-            - Taking breaks to recharge — even when things feel okay.
+            - Taking breaks to recharge, even when things feel okay.
             - Checking in on your friends too. A kind word can go a long way.
 
             Your well-being is important. Stay mindful, and keep being kind to yourself.
-        """)
-    else:
-        st.warning("Prediction could not be made.")
+            """
+        )
+
 
 st.markdown("""
     <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.3); margin-top: 3rem;"/>
@@ -204,3 +212,4 @@ st.markdown("""
         <em>Created with 💚 by Ifeoluwa Ilesanmi</em>
     </div>
 """, unsafe_allow_html=True)
+
