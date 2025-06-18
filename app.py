@@ -16,7 +16,7 @@ st.markdown("""
 ### About the Mental Health Risk Prediction Tool
 
 Hi,
-I'm **Ifeoluwa Ilesanmi**, am a Computer Science student at **Federal University Oye-Ekiti (FUOYE)**.  
+I'm **Ifeoluwa Ilesanmi**, a Computer Science student at **Federal University Oye-Ekiti (FUOYE)**.  
 I created this platform as a project to support students in identifying early signs of mental health challenges using machine learning.
 
 This tool analyzes key aspects of a student's life like academic workload, sleep habits, and extracurricular involvement, to help you understand your mental health risk level.
